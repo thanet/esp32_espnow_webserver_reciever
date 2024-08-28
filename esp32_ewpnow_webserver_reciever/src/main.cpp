@@ -9,6 +9,11 @@
 #include "ESPAsyncWebServer.h"
 #include <Arduino_JSON.h>
 
+#include <HTTPClient.h> 
+String URL = "http://computer_ip/project_folder/project_file.php";
+int temperature = 50; 
+int humidity = 50;
+
 // Replace with your network credentials (STATION)
 const char* ssid = "True Enjoy";
 const char* password = "enjoy7777777777";
@@ -175,4 +180,23 @@ void loop() {
     events.send("ping",NULL,millis());
     lastEventTime = millis();
   }
+
+// for upload data to xampp
+  
+    String postData = "temperature=" + String(temperature) + "&humidity=" + String(humidity); 
+
+    HTTPClient http; 
+    http.begin(URL);
+    http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+    
+    int httpCode = http.POST(postData); 
+    String payload = http.getString(); 
+    
+    Serial.print("URL : "); Serial.println(URL); 
+    Serial.print("Data: "); Serial.println(postData); 
+    Serial.print("httpCode: "); Serial.println(httpCode); 
+    Serial.print("payload : "); Serial.println(payload); 
+    Serial.println("--------------------------------------------------");
+  
+
 }
