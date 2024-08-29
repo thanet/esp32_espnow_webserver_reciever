@@ -10,9 +10,9 @@
 #include <Arduino_JSON.h>
 
 #include <HTTPClient.h> 
-String URL = "http://computer_ip/project_folder/project_file.php";
-int temperature = 50; 
-int humidity = 50;
+String URL = "http://127.0.0.1/esp8266/test.php";
+int temperature = 0; 
+int humidity = 0;
 
 // Replace with your network credentials (STATION)
 const char* ssid = "True Enjoy";
@@ -56,6 +56,30 @@ void OnDataRecv(const uint8_t * mac_addr, const uint8_t *incomingData, int len) 
   Serial.printf("h value: %4.2f \n", incomingReadings.hum);
   Serial.printf("readingID value: %d \n", incomingReadings.readingId);
   Serial.println();
+
+// ++for upload data to xampp
+
+    // ++get data from esp_now to temperator and humidity
+    temperature = int(board["temperature"]);
+    humidity = int(board["humidity"]);
+    // --get data from esp_now to temperator and humidify
+
+    String postData = "temperature=" + String(temperature) + "&humidity=" + String(humidity); 
+
+    HTTPClient http; 
+    http.begin(URL);
+    http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+    
+    int httpCode = http.POST(postData); 
+    String payload = http.getString(); 
+    
+    Serial.print("URL : "); Serial.println(URL); 
+    Serial.print("Data: "); Serial.println(postData); 
+    Serial.print("httpCode: "); Serial.println(httpCode); 
+    Serial.print("payload : "); Serial.println(payload); 
+    Serial.println("--------------------------------------------------");
+// --for upload data to xampp
+
 }
 
 const char index_html[] PROGMEM = R"rawliteral(
@@ -181,22 +205,27 @@ void loop() {
     lastEventTime = millis();
   }
 
-// for upload data to xampp
-  
-    String postData = "temperature=" + String(temperature) + "&humidity=" + String(humidity); 
+// // ++for upload data to xampp
 
-    HTTPClient http; 
-    http.begin(URL);
-    http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+//     // ++get data from esp_now to temperator and humidity
+//     temperature = int(board["temperature"]);
+//     humidity = int(board["humidity"]);
+//     // --get data from esp_now to temperator and humidify
+
+//     String postData = "temperature=" + String(temperature) + "&humidity=" + String(humidity); 
+
+//     HTTPClient http; 
+//     http.begin(URL);
+//     http.addHeader("Content-Type", "application/x-www-form-urlencoded");
     
-    int httpCode = http.POST(postData); 
-    String payload = http.getString(); 
+//     int httpCode = http.POST(postData); 
+//     String payload = http.getString(); 
     
-    Serial.print("URL : "); Serial.println(URL); 
-    Serial.print("Data: "); Serial.println(postData); 
-    Serial.print("httpCode: "); Serial.println(httpCode); 
-    Serial.print("payload : "); Serial.println(payload); 
-    Serial.println("--------------------------------------------------");
-  
+//     Serial.print("URL : "); Serial.println(URL); 
+//     Serial.print("Data: "); Serial.println(postData); 
+//     Serial.print("httpCode: "); Serial.println(httpCode); 
+//     Serial.print("payload : "); Serial.println(payload); 
+//     Serial.println("--------------------------------------------------");
+// // --for upload data to xampp
 
 }
