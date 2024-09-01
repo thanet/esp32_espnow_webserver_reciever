@@ -10,13 +10,21 @@
 #include <Arduino_JSON.h>
 
 #include <HTTPClient.h> 
-String URL = "http://127.0.0.1/esp8266/test.php";
+
+// Replace with your network credentials (STATION)  enjoy office
+// const char* ssid = "True Enjoy";
+// const char* password = "enjoy7777777777";
+// String URL = "http://127.0.0.1/esp8266/test.php";
+// int temperature = 0; 
+// int humidity = 0;
+
+
+// Replace with your network credentials (STATION)  บ้านริมโขง
+const char* ssid = "ENJMesh";
+const char* password = "enjoy042611749";
+String URL = "http://192.168.0.113/EspData/upload.php";
 int temperature = 0; 
 int humidity = 0;
-
-// Replace with your network credentials (STATION)
-const char* ssid = "True Enjoy";
-const char* password = "enjoy7777777777";
 
 // Structure example to receive data
 // Must match the sender structure
