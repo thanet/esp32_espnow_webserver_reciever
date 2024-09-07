@@ -26,7 +26,8 @@ String URL = "http://192.168.0.113/EspData/upload.php";
 int temperature = 0; 
 int humidity = 0;
 
-void connectWiFi();
+void UploadData2Xampp();
+//void connectWiFi();
 
 // Structure example to receive data
 // Must match the sender structure
@@ -73,41 +74,41 @@ void OnDataRecv(const uint8_t * mac_addr, const uint8_t *incomingData, int len) 
     temperature = int(board["temperature"]);
     humidity = int(board["humidity"]);
     // --get data from esp_now to temperator and humidify
-    WiFi.mode(WIFI_STA);
-    delay (2000);
+    //WiFi.mode(WIFI_STA);
+    //delay (2000);
    
-  String postData = "temperature=" + String(temperature) + "&humidity=" + String(humidity); 
+  // String postData = "temperature=" + String(temperature) + "&humidity=" + String(humidity); 
 
-  HTTPClient http; 
-  http.begin(URL);
-  http.addHeader("Content-Type", "application/x-www-form-urlencoded"); 
+  // HTTPClient http; 
+  // http.begin(URL);
+  // http.addHeader("Content-Type", "application/x-www-form-urlencoded"); 
   
-  int httpCode = http.POST(postData); 
-  String payload = http.getString(); 
+  // int httpCode = http.POST(postData); 
+  // String payload = http.getString(); 
   
   
-  if(httpCode > 0) {
-    // file found at server
-    if(httpCode == HTTP_CODE_OK) {
-      String payload = http.getString();
-      Serial.println(payload);
-    } else {
-      // HTTP header has been send and Server response header has been handled
-      Serial.printf("[HTTP] GET... code: %d\n", httpCode);
-    }
-  } else {
-    Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
-  }
+  // if(httpCode > 0) {
+  //   // file found at server
+  //   if(httpCode == HTTP_CODE_OK) {
+  //     String payload = http.getString();
+  //     Serial.println(payload);
+  //   } else {
+  //     // HTTP header has been send and Server response header has been handled
+  //     Serial.printf("[HTTP] GET... code: %d\n", httpCode);
+  //   }
+  // } else {
+  //   Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+  // }
   
-  http.end();  //Close connection
+  // http.end();  //Close connection
   
-  Serial.print("URL : "); Serial.println(URL); 
-  Serial.print("Data: "); Serial.println(postData); 
-  Serial.print("httpCode: "); Serial.println(httpCode); 
-  Serial.print("payload : "); Serial.println(payload); 
-  Serial.println("--------------------------------------------------");
+  // Serial.print("URL : "); Serial.println(URL); 
+  // Serial.print("Data: "); Serial.println(postData); 
+  // Serial.print("httpCode: "); Serial.println(httpCode); 
+  // Serial.print("payload : "); Serial.println(payload); 
+  // Serial.println("--------------------------------------------------");
 
-  delay(10000);
+  // delay(10000);
 // --for upload data to xampp
 
 }
@@ -190,11 +191,11 @@ void setup() {
   Serial.begin(115200);
 
   // Set the device as a Station and Soft Access Point simultaneously
-  WiFi.mode(WIFI_AP_STA);
+  //WiFi.mode(WIFI_AP_STA);
   
 // Set the device as a Station 
-  // WiFi.mode(WIFI_STA);
-
+  WiFi.mode(WIFI_STA);
+      WiFi.setSleep(WIFI_PS_NONE);
   // Set device as a Wi-Fi Station
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
@@ -240,6 +241,7 @@ void loop() {
     lastEventTime = millis();
   }
 
+UploadData2Xampp();
 // ++for upload data to xampp
 
   //   // ++get data from esp_now to temperator and humidity
@@ -282,20 +284,25 @@ void loop() {
 }
 
 
-void connectWiFi() {
-  WiFi.mode(WIFI_OFF);
-  delay(1000);
-  //This line hides the viewing of ESP as wifi hotspot
-  WiFi.mode(WIFI_STA);
+
+//Function for upload data to xampp
+void UploadData2Xampp() {
+  Serial.println("Have Data to up Upload...");
+
+  String postData = "temperature=" + String(temperature) + "&humidity=" + String(humidity); 
+
+  HTTPClient http; 
+  http.begin(URL);
+  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
   
-  WiFi.begin(ssid, password);
-  Serial.println("Connecting to WiFi");
+  int httpCode = http.POST(postData); 
+  String payload = http.getString(); 
   
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-    
-  Serial.print("connected to : "); Serial.println(ssid);
-  Serial.print("IP address: "); Serial.println(WiFi.localIP());
+  Serial.print("URL : "); Serial.println(URL); 
+  Serial.print("Data: "); Serial.println(postData); 
+  Serial.print("httpCode: "); Serial.println(httpCode); 
+  Serial.print("payload : "); Serial.println(payload); 
+  Serial.println("--------------------------------------------------");
+  delay(20000);
+
 }
